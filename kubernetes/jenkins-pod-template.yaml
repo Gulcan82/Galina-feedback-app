@@ -8,13 +8,15 @@ spec:
   containers:
   - name: docker
     image: docker:latest
+    securityContext:
+      privileged: true
     resources:
       requests:
-        memory: "128Mi"
-        cpu: "250m"
+        memory: "512Mi"
+        cpu: "500m"
       limits:
-        memory: "128Mi"
-        cpu: "250m"
+        memory: "1Gi"
+        cpu: "1"
       volumeMounts:
       - name: docker-socket
         mountPath: /var/run/docker.sock
@@ -22,4 +24,3 @@ spec:
   - hostPath:
       path: /var/run/docker.sock
     name: docker-socket
- 

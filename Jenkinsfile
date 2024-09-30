@@ -7,7 +7,7 @@ pipeline {
     }
     
     environment {
-        GITHUB_REPO = 'https://github.com/Gulcan82/feedback-app.git'
+        GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
     }
     
     stages {

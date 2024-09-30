@@ -26,7 +26,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 echo 'Pushing the image to Docker Hub...'
-                sh 'socker push gulcan82/feedback-app:pipeline-test'
+                sh 'docker push gulcan82/g-feedback-app:pipeline-test'
                 echo 'Push successful.'
 
             }

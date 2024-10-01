@@ -2,35 +2,7 @@ pipeline {
     agent {
         kubernetes {
             label 'jenkins-docker-agent'
-            defaultContainer 'jnlp'
-            yaml """ 
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    jenkins: slave
-spec:
-  containers:
-  - name: docker
-    image: docker:latest
-    resources:
-      requests:
-        memory: "128Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "250m"
-    comand:
-    - cat
-    tty: true
-    volumeMounts:
-    - name: docker-socket
-      mountPath: /var/run/docker.sock
-  volumes:
-  - hostPath:
-      path: /var/run/docker.sock
-    name: docker-socket            
-"""
+            yamlFile 'kubernetes_jenkins/jenkins-pod-template.yaml'
 
         }
     }
@@ -75,9 +47,10 @@ spec:
         stage('Kubernetes Deploy') {
             steps {
                 echo 'Deploying to kubernetes cluster...'
-                sh 'kubectl apply -f kubernetes/api-deployment.yaml'
-                echo 'Deployment successful.'
+                container('kubesctl')
+                    sh 'kubectl apply -f kubernetes/api-deployment.yaml'
+               
             }
-        }
+        } echo 'Deployment successful.'
     }   
 }

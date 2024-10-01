@@ -53,7 +53,7 @@ spec:
             steps {
                 echo 'Building the app...'
                 container('docker') {
-                    sh 'docker build -t gulcan82/g-feedback-app:pipeline-test'
+                    sh 'docker build -t gulcan82/g-feedback-app:pipeline-test .'
                 }
                 echo 'Build successful.'
             }    

@@ -20,6 +20,9 @@ spec:
       limits:
         memory: "128Mi"
         cpu: "250m"
+    comand:
+    - cat
+    tty: true
     volumeMounts:
     - name: docker-socket
       mountPath: /var/run/docker.sock

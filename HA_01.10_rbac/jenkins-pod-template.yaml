@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-agent
+  labels:
+    app: jenkins-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-agent
+  template:
+    metadata:
+      labels:
+        app: jenkins-agent
+    spec:
+      serviceAccountName: jenkins-sa
+      containers:
+      - name: docker
+        image: docker:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        command:
+        - cat
+        tty: true
+        volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+          
+      - name: kubectl
+        image: lachlanevenson/k8s-kubectl:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        command:
+        - cat
+        tty: true
+        
+      volumes:
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock

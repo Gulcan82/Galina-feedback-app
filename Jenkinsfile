@@ -3,7 +3,6 @@ pipeline {
         kubernetes {
             label 'jenkins-docker-agent'
             yamlFile 'kubernetes_jenkins/jenkins-pod-template.yaml'
-
         }
     }
 
@@ -41,7 +40,6 @@ pipeline {
                             sh 'docker push $DOCKER_IMAGE'
                         }
                     }
-                   
                 }
                 echo 'Push successful.'
             }
@@ -49,10 +47,11 @@ pipeline {
         stage('Kubernetes Deploy') {
             steps {
                 echo 'Deploying to kubernetes cluster...'
-                container('kubesctl')
+                container('kubectl') {
                     sh 'kubectl apply -f kubernetes/api-deployment.yaml'
-               
+                }
+                echo 'Deployment successful.'
             }
-        } echo 'Deployment successful.'
-    }   
+        }
+    }
 }

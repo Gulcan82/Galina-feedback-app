@@ -62,7 +62,12 @@ spec:
             steps {
                 echo 'Pushing the image to Docker Hub...'
                 container('docker') {
-                    sh 'docker push gulcan82/g-feedback-app:pipeline-test'
+                    script {
+                        docker.withRegistry('', 'dockerhub-token') {
+                            sh 'docker push gulcan82/g-feedback-app:pipeline-test'
+                        }
+                    }
+                   
                 }
                 echo 'Push successful.'
             }

@@ -8,17 +8,35 @@ spec:
   containers:
   - name: docker
     image: docker:latest
+    securityContext:
+      privileged: true
     resources:
       requests:
-        memory: "128Mi"
-        cpu: "250m"
+        memory: "512Mi"
+        cpu: "500m"
       limits:
-        memory: "128Mi"
-        cpu: "250m"
+        memory: "1Gi"
+        cpu: "1"
     volumeMounts:
     - name: docker-socket
       mountPath: /var/run/docker.sock
+    - mountPath: "/home/jenkins/agent"
+      name: workspace-volume
+  - name: jnlp
+    image: jenkins/inbound-agent:3261.v9c670a_4748a_9-2
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: workspace-volume
   volumes:
-  - hostPath:
+  - name: workspace-volume
+    emptyDir: {}
+  - name: docker-socket
+    hostPath:
       path: /var/run/docker.sock
-    name: docker-socket

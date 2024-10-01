@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: jenkins-sa-role-binding
-  namespace: default  # Ersetzen Sie "default" durch Ihren gewünschten Namespace, falls anders
+  namespace: default
 subjects:
 - kind: ServiceAccount
   name: jenkins-sa

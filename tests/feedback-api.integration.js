@@ -96,7 +96,7 @@ const getAllFeedback = () => {
 
 // DELETE /feedback/:title
 const deleteFeedback = () => {
-    const response = http.delete(`${BASE_URL}/feedback/Test Feedback`);
+    const response = http.del(`${BASE_URL}/feedback/Test Feedback`);
 
     check(response, {
         'DELETE /feedback/:title status code 200 (OK)': (res) => res.status === 200,

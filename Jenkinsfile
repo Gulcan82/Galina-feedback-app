@@ -14,7 +14,7 @@ pipeline {
         GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
         DOCKER_IMAGE = 'gulcan82/g-feedback-app:pipeline-test'
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
-     }
+    }
     
     stages {        
         stage('Checkout') {           
@@ -44,7 +44,7 @@ pipeline {
                 echo 'Push successful.'
             }
         }
-         stage('Kubernetes Deploy Dependencies') {
+        stage('Kubernetes Deploy Dependencies') {
             steps {
                 echo 'Deploying to kubernetes cluster...'
                 container('kubectl') {
@@ -63,17 +63,17 @@ pipeline {
                     sh 'kubectl apply -f kubernetes/api-deployment.yaml'
                 }
                 echo 'Deployment successful.'
-            }
+            }  // Hier die schließende Klammer hinzufügen
+        }  // Korrektur hier
+
         stage('Integration Tests') {
             steps {
                 echo 'Running integration tests...'
-                container('k6')
-                    sh 'k6 run --env BASE_URL=http://feedback-app-api-service:3000 ./tests/feedback-api.integration.js
-'
-
+                container('k6') {
+                    sh 'k6 run --env BASE_URL=http://feedback-app-api-service:3000 ./tests/feedback-api.integration.js'
+                }
                 echo 'Integration tests ready.'
             }
-        }
         }
     }
 }

@@ -16,7 +16,7 @@ const createFeedback = () => {
 
     check(response, {
         'POST /feedback valid data: status code 201 (Created)': (res) => res.status === 201,
-        'POST /feedback response has message': (res) => res.json('message') === 'Feedback erfolgreich gespeichert.'
+        'POST /feedback response has message': (res) => res.json('message') === 'Toll!!! Feedback erfolgreich gespeichert.'
     });
 };
 
@@ -100,17 +100,17 @@ const deleteFeedback = () => {
 
     check(response, {
         'DELETE /feedback/:title status code 200 (OK)': (res) => res.status === 200,
-        'DELETE /feedback/:title response has message': (res) => res.json('meessage') === 'Feedback erfolgreich geloöscht.'
+        'DELETE /feedback/:title response has message': (res) => res.json('message') === 'Feedback erfolgreich geloescht.'
     });
 
 };
 // DELETE /feedback/:title not found
 const deleteNonExistentFeedback = () => {
-    const response = http.delete('${BASE_URL}/feedback/NonExistentFeedback');
+    const response = http.del(`${BASE_URL}/feedback/NonExistentFeedback`);
 
     check(response,{
         'DELETE /feedback/:title status code 404 (Not Found)': (res) => res.status === 404,
-        'DELETE /feedback/:title response has error message': (res) => res.json('meessage') === 'Feedback nicht gefunden.'
+        'DELETE /feedback/:title response has error message': (res) => res.json('message') === 'Feedback nicht gefunden.'
     });
 
 };

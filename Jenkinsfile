@@ -48,10 +48,10 @@ pipeline {
             steps {
                 echo 'Deploying to kubernetes cluster...'
                 container('kubectl') {
-                    sh 'kubectl apply -f kubernetes/secret.yaml'
-                    sh 'kubectl apply -f kubernetes/configmap.yaml'
-                    sh 'kubectl apply -f kubernetes/database-volume.yaml'
-                    sh 'kubectl apply -f kubernetes/database-deployment.yaml'
+                    //sh 'kubectl apply -f kubernetes/secret.yaml'
+                    //sh 'kubectl apply -f kubernetes/configmap.yaml'
+                    //sh 'kubectl apply -f kubernetes/database-volume.yaml'
+                    //sh 'kubectl apply -f kubernetes/database-deployment.yaml'
                 }
                 echo 'Deployment successful.'
             }

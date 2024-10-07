@@ -16,6 +16,15 @@ spec:
       limits:
         memory: "128Mi"
         cpu: "250m"
+  - name: k6
+    image: gulcan82/k6:latest
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "250m"
     command:
     - cat
     tty: true

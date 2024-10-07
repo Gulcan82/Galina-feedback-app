@@ -98,5 +98,28 @@ pipeline {
                 echo 'Integration tests completed.'
             }
         }
-    }   
+    }  
+
+    post {
+        always {
+            echo 'Post: DockerHub URL...'
+            script {
+                def dockerHubURL = "https://hub.docker.com/r/${DOCKER_REPO}/tags?name=${IMAGE_TAG}"
+                echo "DockerHub URL for build: ${dockerHubUrl}"
+            }
+        }
+        success {
+            echo 'Build successful, pushing the image as latest...'
+            container('docker') {
+                script {
+                    dcoker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                        sh "docker tag ${DOCKER_IMAGE} ${DOCKER_REPO}:latest"
+                        sh "docker push ${DOCKER_REPO}:latest"
+                    }
+                }
+            }
+            echo 'The latest Docker image successfully updated.'
+        }
+
+    } 
 }

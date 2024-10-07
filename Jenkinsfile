@@ -48,36 +48,46 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
-                    // Hier können weitere Deployments hinzugefügt werden
                     sh 'kubectl apply -f kubernetes/feedback-frontend.yaml'
                 }
                 echo 'Deployment successful.'
             }
         }
         stage('Check App Status') {
-            echo 'Checking if the App is reachable...'
-            script {
-                def retries = 30
-                def delay = 10
-                def url = "http://feedback-app-api-service:3000/feedback"
+            steps {
+                echo 'Checking if the App is reachable...'
+                script {
+                    def retries = 30
+                    def delay = 10
+                    def url = "http://feedback-app-api-service:3000/feedback"
 
-                for (int i 0; i < retries; i++) {
-                    def result = sh(script: "curl -o /dev/null -w '%{http_code}' $url", returnStdout: true).trim()
-                    
+                    for (int i = 0; i < retries; i++) {
+                        def result = sh(script: "curl -o /dev/null -w '%{http_code}' $url", returnStdout: true).trim()
+
+                        if (result == '200') {
+                            echo 'App is reachable!'
+                            break
+                        } else {
+                            echo "App health check ${i + 1}: HTTP $result. Retrying in ${delay} seconds."
+                        }
+
+                        if (i == retries - 1) {
+                            error "App is unreachable after ${retries} attempts."
+                        }
+
+                        sleep delay
+                    }
                 }
-
-
             }
         }
-         stage('Integration Tests') {
+        stage('Integration Tests') {
             steps {
                 echo 'Running integration tests...'
                 container('k6') {
                     sh 'k6 run --env BASE_URL=http://feedback-app-api-service:3000 ./tests/feedback-api.integration.js'
                 }
-                echo 'Integration tests ready.'
+                echo 'Integration tests completed.'
             }
         }
     }   
 }
- 

@@ -11,8 +11,8 @@ pipeline {
     }
     
     environment {
-        GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app-frontend.git'
-        DOCKER_IMAGE = 'gulcan82/g-feedback-app-frontend:pipeline-test'
+        GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
+        DOCKER_IMAGE = 'gulcan82/g-feedback-app:pipeline-test'
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
     }
     
@@ -48,8 +48,8 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
-                    sh 'kubectl apply -f kubernetes/feedback-frontend.yaml'
-                    sh 'kubectl rollout status deployment/feedback-frontend'
+                    sh 'kubectl apply -f kubernetes/feedback.yaml'
+                    sh 'kubectl rollout status deployment/feedback'
                 }
                 echo 'Deployment successful.'
             }

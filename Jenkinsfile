@@ -49,6 +49,7 @@ pipeline {
                 echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
                     sh 'kubectl apply -f kubernetes/feedback-frontend.yaml'
+                    sh 'kubectl rollout status deployment/feedback-frontend'
                 }
                 echo 'Deployment successful.'
             }

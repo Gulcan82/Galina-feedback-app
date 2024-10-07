@@ -12,8 +12,10 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
-        DOCKER_IMAGE = 'gulcan82/g-feedback-app:pipeline-test'
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
+        DOCKER_REPO = 'gulcan82/g-feedback-app'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKER_IMAGE = "${DOCKER_REPO}:${IMAGE_TAG}"
     }
     
     stages {        
@@ -44,12 +46,18 @@ pipeline {
                 echo 'Push successful.'
             }
         }
-        stage('Kubernetes Deploy') {
+        stage('Kubernetes Deploy API') {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
-                    sh 'kubectl apply -f kubernetes/feedback.yaml'
-                    sh 'kubectl rollout status deployment/feedback'
+
+                    script {
+                        sh 'sed -i "s|image: gulcan82/g-feedback-app:latest|image: $DOCKER_IMAGE|g" kubernetes/api-deployment.yaml'
+                        sh 'kubectl apply -f kubernetes/api-deployment.yaml'
+
+                    }
+                   
+                   
                 }
                 echo 'Deployment successful.'
             }

@@ -11,8 +11,8 @@ pipeline {
     }
     
     environment {
-        GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
-        DOCKER_IMAGE = 'gulcan82/g-feedback-app:pipeline-test'
+        GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app-frontend.git'
+        DOCKER_IMAGE = 'gulcan82/g-feedback-app-frontend:pipeline-test'
         DOCKER_CREDENTIALS_ID = 'dockerhub-token'
     }
     
@@ -44,35 +44,14 @@ pipeline {
                 echo 'Push successful.'
             }
         }
-        stage('Kubernetes Deploy Dependencies') {
+        stage('Kubernetes Deploy') {
             steps {
-                echo 'Deploying to kubernetes cluster...'
+                echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
-                    //sh 'kubectl apply -f kubernetes/secret.yaml'
-                    //sh 'kubectl apply -f kubernetes/configmap.yaml'
-                    //sh 'kubectl apply -f kubernetes/database-volume.yaml'
-                    //sh 'kubectl apply -f kubernetes/database-deployment.yaml'
+                    // Hier können weitere Deployments hinzugefügt werden
+                    sh 'kubectl apply -f kubernetes/feedback-frontend.yaml'
                 }
                 echo 'Deployment successful.'
-            }
-        }
-        stage('Kubernetes Deploy API') {
-            steps {
-                echo 'Deploying to kubernetes cluster...'
-                container('kubectl') {
-                    sh 'kubectl apply -f kubernetes/api-deployment.yaml'
-                }
-                echo 'Deployment successful.'
-            }  // Hier die schließende Klammer hinzufügen
-        }  // Korrektur hier
-
-        stage('Integration Tests') {
-            steps {
-                echo 'Running integration tests...'
-                container('k6') {
-                    sh 'k6 run --env BASE_URL=http://feedback-app-api-service:3000 ./tests/feedback-api.integration.js'
-                }
-                echo 'Integration tests ready.'
             }
         }
     }

@@ -54,6 +54,21 @@ pipeline {
                 echo 'Deployment successful.'
             }
         }
+        stage('Check App Status') {
+            echo 'Checking if the App is reachable...'
+            script {
+                def retries = 30
+                def delay = 10
+                def url = "http://feedback-app-api-service:3000/feedback"
+
+                for (int i 0; i < retries; i++) {
+                    def result = sh(script: "curl -o /dev/null -w '%{http_code}' $url", returnStdout: true).trim()
+                    
+                }
+
+
+            }
+        }
          stage('Integration Tests') {
             steps {
                 echo 'Running integration tests...'

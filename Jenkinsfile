@@ -46,22 +46,22 @@ pipeline {
                 echo 'Push successful.'
             }
         }
-        stage('Kubernetes Deploy API') {
+       stage('Kubernetes Deploy API') {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
                 container('kubectl') {
-
                     script {
                         sh 'sed -i "s|image: gulcan82/g-feedback-app:latest|image: $DOCKER_IMAGE|g" kubernetes/api-deployment.yaml'
-                        sh 'kubectl apply -f kubernetes/api-deployment.yaml'
-
-                    }
-                   
-                   
+                        def deployResult = sh(script: 'kubectl apply -f kubernetes/api-deployment.yaml', returnStatus: true)
+                        if (deployResult != 0) {
+                            error "Deployment failed with status ${deployResult}."
                 }
-                echo 'Deployment successful.'
             }
         }
+                echo 'Deployment successful.'
+    }
+}
+
         stage('Check App Status') {
             steps {
                 echo 'Checking if the App is reachable...'
@@ -112,7 +112,7 @@ pipeline {
             echo 'Build successful, pushing the image as latest...'
             container('docker') {
                 script {
-                    dcoker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
                         sh "docker tag ${DOCKER_IMAGE} ${DOCKER_REPO}:latest"
                         sh "docker push ${DOCKER_REPO}:latest"
                     }

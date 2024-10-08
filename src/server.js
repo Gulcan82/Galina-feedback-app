@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import feedbackRouter from './routes';
+import feedbackRouter from './routes/feedbackRoutes.js';
 import { createTable } from './db.js';
 
 

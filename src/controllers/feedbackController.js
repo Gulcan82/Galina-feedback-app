@@ -1,4 +1,4 @@
-import { pool } from './db.js';  // Importiere den Datenbankpool aus der db.js-Datei
+import { pool } from '../db.js';  // Importiere den Datenbankpool aus der db.js-Datei
 
 /**
  * Fügt ein neues Feedback in die Datenbank ein.

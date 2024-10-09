@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
+  name: jenkins-agent-pod
   labels:
     jenkins: slave
 spec:

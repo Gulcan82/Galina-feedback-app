@@ -54,5 +54,5 @@ export const deleteFeedbackByTitle = async (title) => {
     const result = await pool.query(query, [title]);
     
     // Rückgabe des gelöschten Feedback-Eintrags oder null
-    return result.rows[0];
+    return result;
 };

@@ -38,9 +38,11 @@ feedbackRouter.post('/feedback', feedbackValidation, async (req, res) => {
  * @returns {JSON} Erfolgreiche Antwort mit einer Liste aller Feedback-Einträge oder Fehlermeldung.
  */
 feedbackRouter.get('/feedback', async (req, res) => {
+
     try {
         const feedback = await getAllFeedback();
         sendSuccess(res, feedback, "Feedback erfolgreich abgefragt.");
+
     } catch (error) {
         sendError(res, "Fehler beim Abruf des Feedbacks.");
     }

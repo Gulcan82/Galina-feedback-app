@@ -20,4 +20,4 @@ export const sendSuccess = (res, data, message = "Anfrage erfolgreich.", statusC
  */
 export const sendError = (res, error, statusCode = 500) => {
     res.status(statusCode).json({ error });
-};
+}

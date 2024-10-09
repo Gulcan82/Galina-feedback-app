@@ -6,8 +6,8 @@
  * @param {Object|Array|null} data - Die Daten, die in der Antwort enthalten sind (kann ein Objekt, Array oder null sein).
  * @param {string} [message="Anfrage erfolgreich."] - Eine optionale Erfolgsnachricht.
  */
-export const sendSuccess = (res, data, message = "Anfrage erfolgreich.") => {
-    res.status(200).json({ message, data });
+export const sendSuccess = (res, data, message = "Anfrage erfolgreich.", statusCode = 200) => {
+    res.status(statusCode).json({ message, data });
 };
 
 /**

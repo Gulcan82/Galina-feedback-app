@@ -108,8 +108,10 @@ const getAllFeedback = () => {
     const response = http.get(`${BASE_URL}/feedback`);
 
     addCheck(response, {
-        'GET /feedback status code 200 (OK)': (res) => res.status === 200,
-        'GET /feedback response contains an array': (res) => Array.isArray(res.json())
+        'GET /feedback status code 200 (OK)': 
+            (res) => res.status === 200,
+        'GET /feedback response contains an array': 
+            (res) => Array.isArray(res.json().data)
     });
 
 };

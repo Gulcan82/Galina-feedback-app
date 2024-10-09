@@ -12,7 +12,7 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/Gulcan82/Galina-feedback-app.git'
-        DOCKER_CREDENTIALS_ID = 'dckr_pat_WdvL0WrSmXDXYEv9jzU5ZZOXnE'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-token'
         DOCKER_REPO = 'gulcan82/g-feedback-app'
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_IMAGE = "${DOCKER_REPO}:${IMAGE_TAG}"
@@ -24,7 +24,19 @@ pipeline {
                 echo 'Checking out code...'
                 git url: "${GITHUB_REPO}", branch: 'master'
             }            
-        }       
+        }   
+        stage('Run Unit Tests') {
+            steps {
+                echo 'Running unit tests...'
+                container('node') {
+                    sh '''
+                        npm install
+                        npm test
+                    '''
+                }
+                echo 'Unit tests completed successfully.'
+            }
+        }    
         stage('Docker Build') {   
             steps {
                 echo 'Building the Docker image...'
@@ -147,6 +159,9 @@ pipeline {
                 }
             }
             echo 'Docker image successfully pushed with "latest" tag.'
+             
         }
-    }   
+
+    } 
 }
+    

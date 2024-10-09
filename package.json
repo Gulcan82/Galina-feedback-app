@@ -4,7 +4,7 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "test": "jest --coverage --verbose --detectOpenHandles --testLocationInResults",
+    "test": "jest --coverage --verbose --detectOpenHandles --testLocationInResults --maxWorkers=2",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },

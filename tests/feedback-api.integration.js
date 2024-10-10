@@ -29,6 +29,8 @@ const createFeedback = () => {
     const headers = { 'Content-Type': 'application/json' };
 
     const response = http.post(`${BASE_URL}/feedback`, JSON.stringify(payload), { headers });
+    console.log(`Response for POST /feedback: ${response.status} - ${response.body}`);
+    
 
     addCheck(response, {
         'POST /feedback valid data: status code 201 (Created)': 

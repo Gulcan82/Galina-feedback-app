@@ -4,7 +4,7 @@ import { Rate } from 'k6/metrics';
 
 export let errorRate = new Rate('errors');
 
-const BASE_URL = __ENV.BASE_URL || 'http://feedback-app-api-service:3000';
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
 export let options = {
     thresholds: {

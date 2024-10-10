@@ -1,35 +1,37 @@
-// __tests__/errorHandler.test.js
-import { errorHandler } from '../src/middleware/errorHandler';
+import request from 'supertest';
+import express from 'express';
+import { errorHandler } from '../src/middleware/errorHandler'; // Adjust path as needed
+
+const app = express();
+app.use(express.json());
+
+// A sample route that triggers an error
+app.get('/error', (req, res, next) => {
+    next(new Error('Test Error'));
+});
+
+// Error handler middleware
+app.use(errorHandler);
 
 describe('Error Handler Middleware', () => {
-    let mockReq, mockRes, mockNext;
+    let originalConsoleError;
 
-    beforeEach(() => {
-        mockReq = {};
-        mockRes = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
-        };
-        mockNext = jest.fn();
-
-        // Mocking console.error to avoid actual logging in the test output
-        jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Suppress console.error during the test
+    beforeAll(() => {
+        originalConsoleError = console.error;
+        console.error = jest.fn(); // Mock console.error
     });
 
-    afterEach(() => {
-        jest.clearAllMocks();
+    // Restore console.error after the test
+    afterAll(() => {
+        console.error = originalConsoleError;
     });
 
-    it('soll 500 und "Internal Server Error" zurückgeben und den Fehler loggen', () => {
-        const mockError = new Error('Test Error');
+    it('should return 500 and "Internal Server Error" when an error occurs', async () => {
+        const response = await request(app).get('/error');
 
-        errorHandler(mockError, mockReq, mockRes, mockNext);
-
-        // Überprüfe, ob der Fehler geloggt wurde
-        expect(console.error).toHaveBeenCalledWith(mockError.stack);
-
-        // Überprüfe, ob die richtige Antwort gesendet wurde
-        expect(mockRes.status).toHaveBeenCalledWith(500);
-        expect(mockRes.json).toHaveBeenCalledWith({ error: "Internal Server Error" });
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe('Internal Server Error');
+        expect(console.error).toHaveBeenCalled(); // Ensure console.error was called
     });
 });

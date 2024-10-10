@@ -31,7 +31,7 @@ pipeline {
                 container('node') {
                     sh '''
                         npm install
-                        npm test
+                        npm test 
                     '''
                 }
                 echo 'Unit tests completed successfully.'

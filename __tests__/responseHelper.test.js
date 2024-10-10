@@ -1,56 +1,56 @@
-import request from 'supertest';
-import express from 'express';
-import feedbackRouter from '../src/routes/feedbackRoutes'; 
-import { addFeedback, getAllFeedback, deleteFeedbackByTitle } from '../src/controllers/feedbackController';
+import { sendSuccess, sendError } from "../src/utils/responseHelper"; 
 
-// Mock the feedbackController functions
-jest.mock('../src/controllers/feedbackController', () => ({
-    addFeedback: jest.fn(),
-    getAllFeedback: jest.fn(),
-    deleteFeedbackByTitle: jest.fn()
-}));
+const mockRes = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn()
+};
 
-const app = express();
-app.use(express.json());
-app.use('/', feedbackRouter);
+const mockData = { 
+    id: 1, 
+    title: 'Test Title', 
+    text: 'Test text' 
+};
 
-describe('Feedback Routes', () => {
+describe('Response Helper', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    it('GET /feedback - should retrieve all feedbacks and return 200 status', async () => {
-        const mockFeedbackList = [{ id: 1, title: 'Test Feedback', text: 'Test text' }];
-        getAllFeedback.mockResolvedValue(mockFeedbackList); // Mock the function
+    // Test for sendSuccess with default values
+    it('should send success response with default message and status code', () => {
+        sendSuccess(mockRes, mockData);
 
-        const response = await request(app).get('/feedback');
-        expect(response.status).toBe(200);
-        expect(response.body.data).toEqual(mockFeedbackList);
+        expect(mockRes.status).toHaveBeenCalledWith(200);  // Default status code
+        expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Request successful.',  // Default message
+            data: mockData
+        });
     });
 
-    it('DELETE /feedback/:title - should delete feedback and return 200 status', async () => {
-        const mockResponse = { rowCount: 1 };
-        deleteFeedbackByTitle.mockResolvedValue(mockResponse); // Mock the function
+    // Test for sendSuccess with custom message and status code
+    it('should send success response with custom message and status code', () => {
+        sendSuccess(mockRes, mockData, 'Custom success message', 201);
 
-        const response = await request(app).delete('/feedback/Test Feedback');
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Feedback erfolgreich gelöscht.');  // Adjust language if needed
+        expect(mockRes.status).toHaveBeenCalledWith(201);  // Custom status code
+        expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Custom success message',  // Custom message
+            data: mockData
+        });
     });
 
-    it('DELETE /feedback/:title - should return 404 if feedback not found', async () => {
-        const mockResponse = { rowCount: 0 };
-        deleteFeedbackByTitle.mockResolvedValue(mockResponse); // Mock the function
+    // Test for sendError with default status code (500)
+    it('should send error response with default status code', () => {
+        sendError(mockRes, 'Default error message');
 
-        const response = await request(app).delete('/feedback/Nonexistent Feedback');
-        expect(response.status).toBe(404);
-        expect(response.body.message).toBe('Feedback not found');  // Ensure API returns this message
+        expect(mockRes.status).toHaveBeenCalledWith(500);  // Default status code
+        expect(mockRes.json).toHaveBeenCalledWith({ error: 'Default error message' });
     });
 
-    it('POST /feedback - should handle error when saving feedback fails', async () => {
-        addFeedback.mockRejectedValue(new Error('Database error'));  // Mock the function
+    // Test for sendError with custom status code
+    it('should send error response with custom status code', () => {
+        sendError(mockRes, 'Custom error message', 400);
 
-        const response = await request(app).post('/feedback').send({ title: 'Test', text: 'Error test' });
-        expect(response.status).toBe(500);
-        expect(response.body.message).toBe('Internal Server Error');  // Ensure API returns this message
+        expect(mockRes.status).toHaveBeenCalledWith(400);  // Custom status code
+        expect(mockRes.json).toHaveBeenCalledWith({ error: 'Custom error message' });
     });
 });

@@ -1,9 +1,8 @@
 import request from 'supertest';
 import express from 'express';
 import feedbackRouter from '../src/routes/feedbackRoutes'; 
-import { addFeedback, getAllFeedback, deleteFeedbackByTitle } from '../src/controllers/feedbackController'; // Make sure to import
+import { addFeedback, getAllFeedback, deleteFeedbackByTitle } from '../src/controllers/feedbackController';
 
-// Mock the controller functions
 jest.mock('../src/controllers/feedbackController', () => ({
     addFeedback: jest.fn(),
     getAllFeedback: jest.fn(),
@@ -19,51 +18,81 @@ describe('Feedback Routes', () => {
         jest.clearAllMocks();
     });
 
-    it('GET /feedback - should retrieve all feedbacks and return 200 status', async () => {
-        const mockFeedbackList = [{ id: 1, title: 'Test Feedback', text: 'Test text' }];
+    it('POST /feedback - should add feedback and return 201', async () => {
+        const mockFeedback = {
+            id: 1,
+            title: 'Test Feedback',
+            text: 'Test text'
+        };
 
-        // Mocking the resolved value
-        getAllFeedback.mockResolvedValue(mockFeedbackList);
+        addFeedback.mockResolvedValue(mockFeedback);
 
-        // Call the API endpoint
-        const response = await request(app).get('/feedback');
+        const response = await request(app)
+            .post('/feedback')
+            .send({ title: 'Test Feedback', text: 'Test text' });
 
-        // Check the response
-        expect(response.status).toBe(200);
-        expect(response.body.data).toEqual(mockFeedbackList);
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe("Feedback successfully saved.");
+        expect(response.body.data).toEqual(mockFeedback);
     });
 
-    it('DELETE /feedback/:title - should delete feedback and return 200 status', async () => {
-        const mockResponse = { rowCount: 1 };
+    it('POST /feedback - should return 500 if there is an error saving feedback', async () => {
+        // Simulate an error when addFeedback is called
+        addFeedback.mockRejectedValue(new Error('Database error'));
 
-        // Mocking the resolved value
-        deleteFeedbackByTitle.mockResolvedValue(mockResponse);
+        const response = await request(app)
+            .post('/feedback')
+            .send({ title: 'Test Feedback', text: 'Test text' });
 
-        const response = await request(app).delete('/feedback/Test Feedback');
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe('Error saving feedback.');
+    });
+
+    it('GET /feedback - should return all feedback', async () => {
+        const mockFeedback = [{ id: 1, title: 'Test Feedback', text: 'Test text' }];
+        getAllFeedback.mockResolvedValue(mockFeedback);
+
+        const response = await request(app).get('/feedback');
 
         expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Feedback erfolgreich gelöscht.');  // Adjust language if necessary
+        expect(response.body.data).toEqual(mockFeedback);
+    });
+
+    it('GET /feedback - should return 500 if there is an error fetching feedback', async () => {
+        // Simulate an error when getAllFeedback is called
+        getAllFeedback.mockRejectedValue(new Error('Database error'));
+
+        const response = await request(app).get('/feedback');
+
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe('Error retrieving feedback.');
+    });
+
+    it('DELETE /feedback/:title - should delete feedback and return 200', async () => {
+        deleteFeedbackByTitle.mockResolvedValue({ rowCount: 1 });
+
+        const response = await request(app).delete('/feedback/test');
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Feedback successfully deleted.');
     });
 
     it('DELETE /feedback/:title - should return 404 if feedback not found', async () => {
-        const mockResponse = { rowCount: 0 };  // No rows found
+        deleteFeedbackByTitle.mockResolvedValue({ rowCount: 0 });
 
-        // Mocking the resolved value
-        deleteFeedbackByTitle.mockResolvedValue(mockResponse);
-
-        const response = await request(app).delete('/feedback/Nonexistent Feedback');
+        const response = await request(app).delete('/feedback/nonexistent_title');
 
         expect(response.status).toBe(404);
-        expect(response.body.message).toBe('Feedback not found');  // Ensure API sends this message
+        expect(response.body.error).toBe('Feedback not found.');
     });
 
-    it('POST /feedback - should handle error when saving feedback fails', async () => {
-        // Simulate a rejected promise to mock an error
-        addFeedback.mockRejectedValue(new Error('Database error'));
+    it('DELETE /feedback/:title - should return 500 if there is an error deleting feedback', async () => {
+        // Simulate an error when deleteFeedbackByTitle is called
+        deleteFeedbackByTitle.mockRejectedValue(new Error('Database error'));
 
-        const response = await request(app).post('/feedback').send({ title: 'Test', text: 'Error test' });
+        const response = await request(app).delete('/feedback/test');
 
         expect(response.status).toBe(500);
-        expect(response.body.message).toBe('Internal Server Error');  // Ensure API sends this message
+        expect(response.body.error).toBe('Error deleting feedback.');
     });
 });

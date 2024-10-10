@@ -11,18 +11,25 @@ app.post('/feedback', feedbackValidation, (req, res) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-    res.status(201).json({ message: "Validierung erfolgreich." });
+    res.status(201).json({ message: "Validation successful." });
 });
 
 describe('Validation Middleware', () => {
-    it('Validierung fehlerhaft wenn title fehlt', async () => {
+    it('should fail validation when title is missing', async () => {
         const response = await request(app)
             .post('/feedback')
             .send({text: "Test text"});
 
         expect(response.status).toBe(400);
-        expect(response.body.errors[0].msg).toBe('Titel ist erforderlich.');
+        expect(response.body.errors[0].msg).toBe('Title is required.'); // Updated to English
 
+    });
+
+    it('should pass validation when both title and text are provided', async () => {
+        const response = await request(app).post('/feedback').send({ title: 'Test', text: 'Test text' });
+
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe('Validation successful.'); // Updated to English
     });
 
 });

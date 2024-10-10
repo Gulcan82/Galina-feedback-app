@@ -29,14 +29,12 @@ const createFeedback = () => {
     const headers = { 'Content-Type': 'application/json' };
 
     const response = http.post(`${BASE_URL}/feedback`, JSON.stringify(payload), { headers });
-    console.log(`Response for POST /feedback: ${response.status} - ${response.body}`);
-    
 
     addCheck(response, {
         'POST /feedback valid data: status code 201 (Created)': 
             (res) => res.status === 201,
         'POST /feedback response has message': 
-            (res) => res.json('message') === 'Feedback successfully saved.',
+            (res) => res.json('message') === 'Feedback erfolgreich gespeichert.',
         'POST /feedback created matched sent data':
             (res) => res.json().data.title === payload.title &&
                     res.json().data.text === payload.text    
@@ -57,9 +55,10 @@ const createFeedbackNoData = () => {
         'POST /feedback error message for missing data': 
             (res) => res.json().errors.length === 2,
         'POST /feedback error message 1 for missing data (title)': 
-            (res) => res.json().errors[0].msg === 'Title is required.',
+            (res) => res.json().errors[0].msg === 'Titel ist erforderlich.',
         'POST /feedback error message 2 for missing data (text)': 
-            (res) => res.json().errors[1].msg === 'Text is required.'
+            (res) => res.json().errors[1].msg === 'Text ist erforderlich.'
+            
     });
 };
 
@@ -77,7 +76,7 @@ const createFeedbackNoTitle = () => {
         'POST /feedback missing title: status code 400 (Bad Request)': 
             (res) => res.status === 400,
         'POST /feedback error message for missing title': 
-            (res) => res.json().errors[0].msg === 'Title is required.'
+            (res) => res.json().errors[0].msg === 'Titel ist erforderlich.'
     });
 };
 
@@ -95,7 +94,7 @@ const createFeedbackNoText = () => {
         'POST /feedback missing text: status code 400 (Bad Request)': 
             (res) => res.status === 400,
         'POST /feedback error message for missing text': 
-            (res) => res.json().errors[0].msg === 'Text is required.'
+            (res) => res.json().errors[0].msg === 'Text ist erforderlich.'
     });
 };
 
@@ -116,9 +115,9 @@ const createFeedbackInvalidData = () => {
         'POST /feedback error message for invalid data': 
             (res) => res.json().errors.length === 2,
         'POST /feedback error message 1 for invalid data (title)': 
-            (res) => res.json().errors[0].msg === 'Title is required.',
+            (res) => res.json().errors[0].msg === 'Titel ist erforderlich.',
         'POST /feedback error message 2 for invalid data (text)': 
-            (res) => res.json().errors[1].msg === 'Text is required.'
+            (res) => res.json().errors[1].msg === 'Text ist erforderlich.'
     });
 };
 
@@ -142,7 +141,7 @@ const deleteFeedback = () => {
         'DELETE /feedback/:title status code 200 (OK)': 
             (res) => res.status === 200,
         'DELETE /feedback/:title response has message': 
-            (res) => res.json('message') === 'Feedback successfully deleted.'
+            (res) => res.json('message') === 'Feedback erfolgreich geloescht.'
     });
 };
 
@@ -154,9 +153,10 @@ const deleteNonExistentFeedback = () => {
         'DELETE /feedback/:title status code 404 (Not Found)': 
             (res) => res.status === 404,
         'DELETE /feedback/:title response has error message': 
-            (res) => res.json('error') === 'Feedback not found.'
+            (res) => res.json('error') === 'Feedback nicht gefunden.'
     });
 };
+
 
 export default function () {
     createFeedback();

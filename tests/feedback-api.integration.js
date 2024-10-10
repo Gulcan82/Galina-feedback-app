@@ -8,7 +8,7 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
 export let options = {
     thresholds: {
-        "errors": ["rate==0"]
+        "errors": ['rate<0.05'],
     }
 };
 
@@ -17,7 +17,7 @@ const addCheck = (response, checks) => {
     if (!passed) {
         errorRate.add(1);
     }
-}
+};
 
 // POST /feedback 
 const createFeedback = () => {

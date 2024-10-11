@@ -56,9 +56,9 @@ spec:
           memory: "128Mi"
           cpu: "250m"
       command:
-        - cat
+      - cat
       tty: true
   volumes:
-    - name: docker-socket
-      hostPath:
+  - hostPath:
         path: /var/run/docker.sock
+    name: docker-socket

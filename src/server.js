@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import feedbackRouter from './routes/feedbackRoutes.js';
 import { createTable } from './db.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 
 /**
  * Express-Anwendung zur Verwaltung von Feedback-Daten.

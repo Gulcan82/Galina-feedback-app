@@ -1,4 +1,7 @@
 import pkg from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const { Pool } = pkg;
 
@@ -12,7 +15,10 @@ const pool = new Pool({
     host: process.env.DB_HOST,       // Hostname der Datenbank
     database: process.env.DB_NAME,   // Name der Datenbank
     password: process.env.DB_PASSWORD, // Passwort für die Datenbank
-    port: process.env.DB_PORT        // Portnummer für die Datenbankverbindung
+    port: process.env.DB_PORT,
+    ssl: {
+        rejectUnauthorized: false,
+    }        // Portnummer für die Datenbankverbindung
 });
 
 /**

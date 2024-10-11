@@ -32,7 +32,7 @@ describe('Feedback Routes - Success Cases', () => {
             .send({ title: 'Test Feedback', text: 'Test text'});
 
         expect(response.status).toBe(201);
-        expect(response.body.message).toBe("Feedback erfolgreich gespeichert.");
+        expect(response.body.message).toBe("Feedback successfully saved.");
         expect(response.body.data).toEqual(mockFeedback);
     });
 
@@ -52,7 +52,7 @@ describe('Feedback Routes - Success Cases', () => {
         const response = await request(app).delete('/feedback/test');
 
         expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Feedback erfolgreich geloescht.');
+        expect(response.body.message).toBe('Feedback successfully deleted.');
     });
 
     it('DELETE /feedback/:title - should return 404 if feedback not found', async () => {
@@ -61,7 +61,7 @@ describe('Feedback Routes - Success Cases', () => {
         const response = await request(app).delete('/feedback/nonexistent_title');
 
         expect(response.status).toBe(404);
-        expect(response.body.error).toBe('Feedback nicht gefunden.');
+        expect(response.body.error).toBe('Feedback not found.');
     });
 
 });
@@ -90,7 +90,7 @@ describe('Feedback Routes - Error Cases (500)', () => {
             .send({ title: 'Test Feedback', text: 'Test text' });
 
         expect(response.status).toBe(500);
-        expect(response.body.error).toBe('Fehler beim Speichern des Feedbacks.');
+        expect(response.body.error).toBe('Error saving feedback.');
     });
 
     it('GET /feedback - should return 500 if retrieving feedback fails', async () => {
@@ -99,7 +99,7 @@ describe('Feedback Routes - Error Cases (500)', () => {
         const response = await request(app).get('/feedback');
 
         expect(response.status).toBe(500);
-        expect(response.body.error).toBe('Fehler beim Abruf des Feedbacks.');
+        expect(response.body.error).toBe('Error retrieving feedback.');
     });
 
     it('DELETE /feedback/:title - should return 500 if deleting feedback fails', async () => {

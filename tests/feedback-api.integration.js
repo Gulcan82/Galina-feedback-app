@@ -8,7 +8,7 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
 export let options = {
     thresholds: {
-        "errors": ['rate<0.05'],
+        "errors": ["rate==0"],
     }
 };
 

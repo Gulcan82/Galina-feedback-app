@@ -108,6 +108,6 @@ describe('Feedback Routes - Error Cases (500)', () => {
         const response = await request(app).delete('/feedback/title');
 
         expect(response.status).toBe(500);
-        expect(response.body.error).toBe('Fehler beim Loeschen des Feedbacks.');
+        expect(response.body.error).toBe('Error deleting feedback.');
     });
 });

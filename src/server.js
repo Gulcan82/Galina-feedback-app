@@ -19,7 +19,7 @@ const app = express();
  * 
  * @const {number} PORT - Der Port, auf dem die Anwendung lauscht.
  */
-const PORT = 3000;
+
 
 // Setup CORS (Cross-Origin Resource Sharing) für alle Anfragen
 app.use(cors());
@@ -53,6 +53,7 @@ app.use('/', feedbackRouter);
  * @function
  * @param {number} PORT - Der Port, auf dem der Server läuft.
  */
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server läuft auf http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });

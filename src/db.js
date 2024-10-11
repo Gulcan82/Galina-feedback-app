@@ -18,6 +18,7 @@ const pool = new Pool({
     port: process.env.DB_PORT,
     ssl: {
         rejectUnauthorized: false,
+        require: false
     }        // Portnummer für die Datenbankverbindung
 });
 

@@ -37,54 +37,74 @@ pipeline {
                 echo 'Unit tests completed successfully.'
             }
         }
-            stage('Terraform Init') {
-            steps {
-                echo 'Initializing Terraform...'
-                container('terraform') {
-                    script {
-                        dir('terraform-rds') {
-                            sh 'rm -rf .terraform .terraform.lock.hcl'
-                            sh 'terraform init'
-                        }
+        stage('Terraform Init') {
+    steps {
+        echo 'Initializing Terraform...'
+        container('terraform') {
+            script {
+                dir('terraform-rds') {
+                    sh 'rm -rf .terraform .terraform.lock.hcl'
+                    def initStatus = sh(script: 'terraform init', returnStatus: true)
+                    if (initStatus != 0) {
+                        error 'Terraform init failed.'
                     }
                 }
             }
         }
-         stage('Terraform Plan') {
-            steps {
-                echo 'Planning Terraform execution...'
-                container('terraform') {
-                    script {
-                        dir('terraform-rds') {
-                            sh 'terraform plan -out=tfplan -input=false'
-                        }
+    }
+}
+
+stage('Terraform Plan') {
+    steps {
+        echo 'Planning Terraform execution...'
+        container('terraform') {
+            script {
+                dir('terraform-rds') {
+                    def planStatus = sh(script: 'terraform plan -out=tfplan -input=false', returnStatus: true)
+                    if (planStatus != 0) {
+                        error 'Terraform plan failed.'
                     }
                 }
             }
         }
-        stage('Terraform Apply') {
-            steps {
-                echo 'Applying Terraform configuration...'
-                container('terraform') {
-                    script {
-                        dir('terraform-rds') {
-                            sh 'terraform apply -input=false tfplan'
-                        }
+    }
+}
+
+stage('Terraform Apply') {
+    steps {
+        echo 'Applying Terraform configuration...'
+        container('terraform') {
+            script {
+                dir('terraform-rds') {
+                    def applyStatus = sh(script: 'terraform apply -input=false tfplan', returnStatus: true)
+                    if (applyStatus != 0) {
+                        error 'Terraform apply failed.'
                     }
                 }
             }
         }
-        stage('Retrieve RDS Endpoint') {
-            steps {
-                echo 'Retrieving the RDS endpoint...'
-                container('terraform') {
-                    script {
-                        dir('terraform-rds') {
-                            def rdsEndpoint = sh(script: 'terraform output -raw rds_endpoint', returnStdout: true).trim()
-                            echo "RDS Endpoint: ${rdsEndpoint}"
-                            env.RDS_ENDPOINT = rdsEndpoint
-                        }
+    }
+}
+
+stage('Retrieve RDS Endpoint') {
+    steps {
+        echo 'Retrieving the RDS endpoint...'
+        container('terraform') {
+            script {
+                dir('terraform-rds') {
+                    def rdsEndpoint = sh(script: 'terraform output -raw rds_endpoint', returnStdout: true).trim()
+                    if (rdsEndpoint) {
+                        echo "RDS Endpoint: ${rdsEndpoint}"
+                        env.RDS_ENDPOINT = rdsEndpoint
+                    } else {
+                        error 'Failed to retrieve RDS endpoint.'
                     }
+                }
+            }
+        }
+    }
+}
+
                 }    
                    echo 'Updating Kubernetes ConfigMap with RDS endpoint...'
                 container('kubectl') {
@@ -96,7 +116,7 @@ pipeline {
                     }
                 }
             }
-        }   
+          
         stage('Docker Build') {   
             steps {
                 echo 'Building the Docker image...'
@@ -196,7 +216,7 @@ pipeline {
                 echo 'Integration tests completed successfully.'
             }
         }
-    }
+    
     post {
         always {
             echo 'Post: DockerHub URL...'
@@ -223,5 +243,5 @@ pipeline {
         }
 
     } 
-}
+
     
